@@ -1,10 +1,10 @@
 webmethods-mft-container-demos
 ===================================================================
 
-A repository to demonstrate the deployment of webMEthods MFT using containers
+A repository to demonstrate the deployment of webMethods MFT using containers
 
 Setup variants
 -------------------------------------------------------------------
 
 - Go to [Docker Setup](./setup/docker/README.md)
-- Go to [Kubernetes Setup](./setup/kubernetes/README.md)
+- "Kubernetes Setup" (TBD)
