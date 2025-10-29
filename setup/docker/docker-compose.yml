@@ -10,10 +10,10 @@ volumes:
     driver: local
   mftserver_file_data:
     driver: local
-  mftserver_is_configs:
-    driver: local
-  mftserver_mft_configs:
-    driver: local
+  # mftserver_is_configs:
+  #   driver: local
+  # mftserver_mft_configs:
+  #   driver: local
 
 services:
 
