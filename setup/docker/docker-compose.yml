@@ -33,10 +33,10 @@ services:
       SAG_MFT_ADMIN_PASSWORD: ${MFT_ADMIN_PASSWORD}
     volumes:
       - ./application.properties:/opt/softwareag/IntegrationServer/application.properties
-      - mftserver_is_configs:/opt/softwareag/IntegrationServer/instances/default/config:rw
-      - mftserver_mft_configs:/opt/softwareag/IntegrationServer/instances/default/packages/WmMFT/config:rw
       - mftserver_file_data:/data:rw
-      - ./replicate_mftserver:/opt/softwareag/IntegrationServer/instances/default/replicate:rw
+      # - ./replicate_mftserver:/opt/softwareag/IntegrationServer/instances/default/replicate:rw
+      # - mftserver_is_configs:/opt/softwareag/IntegrationServer/instances/default/config:rw
+      # - mftserver_mft_configs:/opt/softwareag/IntegrationServer/instances/default/packages/WmMFT/config:rw
     networks:
       - stack
     depends_on:
