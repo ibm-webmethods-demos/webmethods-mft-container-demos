@@ -1,0 +1,19 @@
+---
+
+name: mftstack
+
+networks:
+  stack:
+
+services:
+
+  dbconfig:
+    image: ${REG_DBCONFIG}${REPO_DBCONFIG}:${TAG_DBCONFIG}
+    restart: ${RESTART_POLICY_JOBS}
+    platform: linux/amd64
+    environment: 
+      DB_ACTION: create
+    volumes:
+      - ./db_postgres_demo:/opt/softwareag/common/auth/db:ro
+    networks:
+      - stack

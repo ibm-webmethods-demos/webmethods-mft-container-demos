@@ -1,10 +1,12 @@
 Docker Sample Deployments - webMethods Managed File Transfer
 =================================================================================
 
+REF Documentation for Docker deployment is at: https://www.ibm.com/docs/en/webmethods-activetransfer/11.1.0?topic=server-using-activetransfer-docker
+
 Container-based deployment of webMethods Active Transfer solution, including:
  - Managed File Transfer Server (MFT Server)
- - Managed File Transfer Gateway (MFT Gateway)
- - Postgres DB
+ - Postgres DB (NFT core)
+ - Postgres DB (MFT archive)
 
 Requirements
 ------------------------------------------------
@@ -32,30 +34,29 @@ docker pull ibmwebmethods.azurecr.io/webmethods-activetransfer:11.1
 docker pull ibmwebmethods.azurecr.io/webmethods-activetransfer-dcc:11.1
 ```
 
-Start the stack - Steps by Steps (This is for first time only)
-------------------------------------------------
+Start the stack in order to setup the DB (first time only)
+------------------------------------------------------------------------------------------------
 
 ### Database backend
 
 NOTE: On first start, it's best to start the stack in controlled order so all the assets are created correctly
 Since "docker compose" does not easily offer an easy way to start multiple components in a specific controlled order... let's perform several docker compose operations at first:
 
+```bash
+docker compose up -d database database-archive
 ```
-docker compose up -d postgres dbconfig
+
+### Database Configuration
+
+```bash
+docker compose -f docker-compose-dbconfig.yml up dbconfig
 ```
-
-... wait for postgres healthy (docker ps | grep postgres) ...
-
-NOTE 1: the container "dbconfig" is a job... it should have run, setup the tables needed in postgres, and terminated (it's expected)
-If you want to check the status or logs for it, run:  
-"docker ps -a | grep dbconfig", find the ID, and run "docker logs <dbconfig container id>"
-
-NOTE 2: For postgres admin password, find it in the [.env](.env) file, in the variable POSTGRES_PASSWORD
 
 ### MFT Server
 
 Then:
-```
+
+```bash
 docker compose up -d mftserver
 ```
 
@@ -72,22 +73,22 @@ Access the Admin MFT UI
 ------------------------------------------------
 
 UIs:
-- MFT Admin UI: http://localhost:9100/mft/ 
+- MFT Admin UI: http://localhost:5555/WmMFT/
   - User = "Administrator"
   - Password = "SomeNewStrongPassword123!" (Note: find it or change it in the [.env](.env) file in the variable APPS_ADMIN_PASSWORD)
-- MFT Web Upload (once configured below): http://localhost:5566 
-  - User = "Administrator" (or others as configured)
-  - Password = "SomeNewStrongPassword123!"
 
 NOTE: replace localhost with the Server's IP if running this stack on a remote server...
 
 Ports Exposed
 ------------------------------------------------
 
+- 5555
+- 5543
 
 Configure the stack (with the MFT Gateway)
 ------------------------------------------------
 
+TBD
 
 Stop the stack
 ------------------------------------------------

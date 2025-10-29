@@ -1,5 +1,7 @@
 ---
 
+name: mftstack
+
 networks:
   stack:
 
@@ -34,20 +36,6 @@ services:
       # - ./replicate_mftserver:/opt/softwareag/IntegrationServer/instances/default/replicate:rw
       # - mftserver_is_configs:/opt/softwareag/IntegrationServer/instances/default/config:rw
       # - mftserver_mft_configs:/opt/softwareag/IntegrationServer/instances/default/packages/WmMFT/config:rw
-    networks:
-      - stack
-    depends_on:
-      - database
-      - database-archive
-
-  dbconfig:
-    image: ${REG_DBCONFIG}${REPO_DBCONFIG}:${TAG_DBCONFIG}
-    restart: ${RESTART_POLICY_JOBS}
-    platform: linux/amd64
-    environment: 
-      DB_ACTION: create
-    volumes:
-      - ./db_postgres_demo:/opt/softwareag/common/auth/db:ro
     networks:
       - stack
     depends_on:
