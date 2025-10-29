@@ -1,0 +1,1 @@
+jdbc:wm:postgresql://databasearchive:5432;DatabaseName=mftarchivedb

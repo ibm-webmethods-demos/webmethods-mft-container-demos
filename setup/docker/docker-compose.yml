@@ -4,7 +4,9 @@ networks:
   stack:
 
 volumes:
-  postgres_data:
+  postgres_data_mft:
+    driver: local
+  postgres_data_mftarch:
     driver: local
   mftserver_file_data:
     driver: local
@@ -18,6 +20,8 @@ services:
   mftserver:
     image: ${REG_MFTSERVER}${REPO_MFTSERVER}:${TAG_MFTSERVER}
     restart: ${RESTART_POLICY_RUNTIMES}
+    platform: linux/amd64
+    hostname: mftserver
     ports:
       ## webMethods IntegrationServer Runtime Ports
       - 5555:5555
@@ -32,44 +36,48 @@ services:
       - mftserver_mft_configs:/opt/softwareag/IntegrationServer/instances/default/packages/WmMFT/config:rw
       - mftserver_file_data:/data:rw
       - ./replicate_mftserver:/opt/softwareag/IntegrationServer/instances/default/replicate:rw
-    hostname: mftserver
     networks:
       - stack
-    depends_on: 
-      - postgres
+    depends_on:
+      - database
+      - database-archive
 
   dbconfig:
     image: ${REG_DBCONFIG}${REPO_DBCONFIG}:${TAG_DBCONFIG}
     restart: ${RESTART_POLICY_JOBS}
+    platform: linux/amd64
     environment: 
-      SCRIPTS_LOGGER_LEVEL: 1
       DB_ACTION: create
-      DB_TYPE: POSTGRESQL
-      DB_NAME: webmisdb
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: webmisdb
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_JDBC_URL: ""
-      DB_JDBC_ARGS: ""
-      PRODUCT_VERSION: 10.15
-      PRODUCT_NAMES: IS,MWS,Monitor
-      COMPONENT_NAMES: ActiveTransfer,ActiveTransferArchive,Archive
-      RUN_FINAL_INVENTORY: "true"
-      WAITFOR_DB_HOST: "true"
-      WAITFOR_DB_TIMEOUT_SEC: "30"
+    volumes:
+      - ./db_postgres_demo:/opt/softwareag/common/auth/db:ro
     networks:
       - stack
-    depends_on: 
-      - postgres
+    depends_on:
+      - database
+      - database-archive
 
-  postgres:
-    image: ${REPO_POSTGRES}
+  database:
+    image: postgres:12
     restart: ${RESTART_POLICY_RUNTIMES}
+    hostname: database
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_mft:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: webmisdb
+      POSTGRES_USER: mftdbuser
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: mftdb
+    networks:
+      - stack
+
+  database-archive:
+    image: postgres:12
+    restart: ${RESTART_POLICY_RUNTIMES}
+    hostname: databasearchive
+    volumes:
+      - postgres_data_mftarch:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: mftarchivedbuser
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: mftarchivedb
     networks:
       - stack
